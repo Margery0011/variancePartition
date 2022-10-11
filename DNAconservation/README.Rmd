@@ -1,0 +1,123 @@
+---
+title: "Normal_Colon"
+author: "yutian"
+date: "`r Sys.Date()`"
+output: github_document
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load libraries,message=FALSE}
+library(readxl)
+library(dplyr)
+library(cowplot)
+library(ggplot2)
+library(ggpubr)
+library(devtools)
+```
+
+# Normal Colon
+
+```{r read data}
+nmx <- readxl::read_xlsx("Normal_colon.xlsx")
+head(nmx)
+```
+## Data Preprocess
+
+```{r summary}
+summary(nmx$`ave ALL`)
+summary(nmx$`ave NN3`)
+```
+
+### Separate Common & Non Common Essential DepMap genes
+
+```{r filter  common essential DepMap genes}
+# Common essential Depmap gene 
+depm <-nmx %>%
+  filter(nmx$`common essential DepMap`!="#N/A")
+```
+
+```{r filter Non Common Essential DepMap genes}
+# Non essential Dep Map gene 
+Ndepm <-nmx[1220:19525,]
+```
+
+### Remove missing values 
+
+```{r Filter out missing values}
+Nona_depm <- dplyr::filter(depm, !is.na(`ave NN3`))
+Nona_Ndepm <- dplyr::filter(Ndepm, !is.na(`ave NN3`))
+```
+
+## Smooth Plots
+
+```{r density_all_normal colon}
+smoothScatter(nmx$`ave ALL`,nmx$`ave NN3`,main = "All Normal Colon")
+```
+
+
+
+```{r density_DepMap Essential Genes}
+smoothScatter(Nona_depm$`ave ALL`,Nona_depm$`ave NN3`,main = "Common Essential DepMap ave_NN3 vs ave_ALLwithout NA values ")
+```
+
+```{r density_ NonCommon Essentai DepMap genes withou NA}
+smoothScatter(Nona_Ndepm$`ave ALL`,Nona_Ndepm$`ave NN3`,main = "None Common Essential DepMap NN3 without NA values ")
+```
+
+## Scatter plot Av3_NN3 vs Ave_All
+
+
+```{r}
+Nona_nmx <-nmx %>%
+  filter(!is.na(`ave NN3`) & !is.na(`ave ALL`))
+```
+
+
+```{r scatterplot_Ave_All_vs_Ave_NN3_Normal_Colon without NAs}
+ggplot(Nona_nmx,aes(`ave ALL`,`ave NN3`)) + geom_point(alpha = 0.3) + geom_smooth(method = "lm",color="red",formula = y~x) + stat_cor(method = "pearson", label.x = 10, label.y = 0.4,size=3)+ggtitle("Ave_All_vs_Ave_NN3_Normal_Colon_withoutNAs")
+
+```
+
+
+```{r _scatterplot_Ave_All_vs_Ave_NN3_DepMap_None_Essential_Genes-withoutNAs}
+ggplot(Nona_Ndepm,aes(`ave ALL`,`ave NN3`)) + geom_point(alpha = 0.3) + geom_smooth(method = "lm",color="red",formula = y~x) + stat_cor(method = "pearson", label.x = 10, label.y = 0.4,size=3)+ggtitle("Ave_All_vs_Ave_NN3_DepMap_None_Essential_Genes-withoutNAs")
+ 
+```
+
+
+```{r scatterplot_of_Ave_NN3_vs_VAR_All_DepMap_Essential_Genes_withoutNAs}
+ggplot(Nona_depm,aes(`VAR all`,`ave NN3`)) + geom_point(alpha = 0.3)+geom_smooth(method = "lm",color="red",formula = y~x)+ stat_cor(method = "pearson", label.x = 10, label.y = 0.125,size=3)+ggtitle("Ave_NN3_vs_VAR_All_DepMap_Essential_Genes_withoutNAs")
+
+```
+
+## Scatter plot Var_All vs Ave_All
+
+```{r Var_all_vs_Ave_all_Normal_Colon_all}
+ggplot(nmx,aes(`ave ALL`,`VAR all`)) + geom_point(alpha = 0.3)+geom_smooth(se = FALSE,formula = y ~x,method = 'loess',span = .2,color = "red")+ggtitle("Var_all_vs_Ave_all_Normal_Colon_all")
+
+```
+
+```{r Var_all_vs_Ave_all_None_DepMap_Essential_withoutNAs}
+ggplot(Nona_Ndepm,aes(`ave ALL`,`VAR all`)) + geom_point(alpha = 0.3)+geom_smooth(method = "loess",color="red",formula = y~x,span = .2)+ggtitle("Var_all_vs_Ave_all_None_DepMap_Essential_withoutNAs")
+```
+
+```{r Var_all_vs_Ave_all_DepMap_Essential_Genes_withoutNAs}
+ggplot(Nona_depm,aes(`ave ALL`,`VAR all`)) + geom_point(alpha = 0.3)+geom_smooth(method = "loess",color="red",formula = y~x,span = .2)+ggtitle("Var_all_vs_Ave_all_DepMap_Essential_Genes_withoutNAs")
+
+```
+
+
+
+
+
+
+
+
+
+```{r}
+summary(Nona_nmx)
+```

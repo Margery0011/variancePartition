@@ -12,6 +12,7 @@ regulation of gene expression. Here, I am going to use `variancePartition` to an
 
 ## EXERCISE
 
+Find my code and script at [here](https://github.com/Margery0011/variancePartition/tree/main/Interviewtest/variancePartition)
 ### 1. Read variancePartition paper
 
 [variancePartition](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-1323-z#MOESM1)
